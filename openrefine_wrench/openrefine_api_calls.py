@@ -61,14 +61,18 @@ def create_or_project(
             f"http://{host}:{port}/command/core/create-project-from-upload?csrf_token={csrf_token}",
             data=payload, files=files)
     except requests.exceptions.RequestException as exc:
-        logger.error(f"[pid {pid}] unable to create project for file {project_file}, error was:\n{exc}")
+        logger.error(
+            f"[pid {pid}] unable to create project for file \"{project_file}\", "
+            f"error was:\n{exc}")
         raise
 
     url_frag = urlparse(resp_project_create.request.url)
 
     project_id = url_frag.query.split("=")[1]
 
-    logger.info(f"[pid {pid}] created project with id {project_id} for file {project_file} ")
+    logger.info(
+        f"[pid {pid}] created project with id \"{project_id}\" "
+        f"for file \"{project_file}\"")
 
     return project_id
 
@@ -104,10 +108,12 @@ def apply_or_project(
             f"http://{host}:{port}/command/core/apply-operations?csrf_token={csrf_token}",
             data=payload)
     except requests.exceptions.RequestException as exc:
-        logger.error(f"[pid {pid}] unable to apply or project id {project_id}, error was:\n{exc}")
+        logger.error(
+            f"[pid {pid}] unable to apply or project id "
+            f"\"{project_id}\", error was:\n{exc}")
         raise
 
-    logger.info(f"[pid {pid}] applied project id {project_id}")
+    logger.info(f"[pid {pid}] applied project id \"{project_id}\"")
 
     return resp_project_apply.json()["code"]
 
@@ -136,7 +142,6 @@ def export_or_project_rows(
         export_file:    path to the exported csv file
     """
 
-    export_file = f"{export_dir}/{str(pathlib.Path(project_file).with_suffix('.csv').name)}"
     export_file = None
 
     csrf_token = _get_csrf_token(host, port, pid)
@@ -153,20 +158,22 @@ def export_or_project_rows(
             data=payload)
     except requests.exceptions.RequestException as exc:
         logger.error(
-            f"[pid {pid}] unable to export or project id {project_id}, "
-            f"to export file {export_file}, error was:\n{exc}")
+            f"[pid {pid}] unable to export or project id \"{project_id}\", "
+            f"related to project file \"{project_file}\", error was:\n{exc}")
         raise
 
     if resp_project_rows_export is not None:
         export_file = (
             f"{export_dir}/"
             f"{str(pathlib.Path(project_file).with_suffix('.csv').name)}")
+
         with(open(file=export_file, mode="w", encoding="UTF-8")) as fo:
             fo.write(resp_project_rows_export.text)
 
         logger.info(
-            f"[pid {pid}] exported or project with id {project_id} "
-            f"to export file {export_file}")
+            f"[pid {pid}] exported or project with id \"{project_id}\" "
+            f"to export file \"{export_file}\"")
+
     return export_file
 
 def delete_or_project(
@@ -198,9 +205,9 @@ def delete_or_project(
             data=payload)
     except requests.exceptions.RequestException as exc:
         logger.error(
-            f"[pid {pid}] unable to delete or project id {project_id}, error was:\n{exc}")
+            f"[pid {pid}] unable to delete or project id \"{project_id}\", error was:\n{exc}")
         raise
 
-    logger.info(f"[pid {pid}] deleted or project with id {project_id}")
+    logger.info(f"[pid {pid}] deleted or project with id \"{project_id}\"")
 
     return resp_project_delete.json()["code"]
