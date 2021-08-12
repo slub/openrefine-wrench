@@ -131,9 +131,13 @@ def export_or_project_rows(
         export_format:  limited to csv
         project_file:   project source file
         export_dir:     path of the directory to export to
+
+    Returns:
+        export_file:    path to the exported csv file
     """
 
     export_file = f"{export_dir}/{str(pathlib.Path(project_file).with_suffix('.csv').name)}"
+    export_file = None
 
     csrf_token = _get_csrf_token(host, port, pid)
 
@@ -154,12 +158,16 @@ def export_or_project_rows(
         raise
 
     if resp_project_rows_export is not None:
+        export_file = (
+            f"{export_dir}/"
+            f"{str(pathlib.Path(project_file).with_suffix('.csv').name)}")
         with(open(file=export_file, mode="w", encoding="UTF-8")) as fo:
             fo.write(resp_project_rows_export.text)
 
         logger.info(
             f"[pid {pid}] exported or project with id {project_id} "
             f"to export file {export_file}")
+    return export_file
 
 def delete_or_project(
     host,
