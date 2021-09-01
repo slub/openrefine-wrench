@@ -1,0 +1,8 @@
+version: "3"
+services:
+  test_openrefine:
+    container_name: test_openrefine
+    image: felixlohmeier/openrefine:3.4.1
+    restart: always
+    ports:
+      - "3333:3333"
