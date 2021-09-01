@@ -6,7 +6,11 @@ import json
 import click
 from multiprocessing import Pool
 from os import getpid
-from openrefine_wrench.openrefine_api_calls import create_or_project, apply_or_project, export_or_project_rows, delete_or_project
+from openrefine_wrench.openrefine_api_calls import (
+    create_or_project,
+    apply_or_project,
+    export_or_project_rows,
+    delete_or_project)
 
 logger = None
 
@@ -33,11 +37,31 @@ def _prep_logger(log_level):
 
     return logging.getLogger(__name__)
 
-def _prep_options(record_path, encoding):
+def _prep_options(
+    source_format,
+    record_path,
+    columns_separator,
+    encoding,
+    custom_options):
     options = {"encoding": encoding}
 
-    if record_path is not None:
+    if record_path is not None and source_format == "xml":
         options.update({"recordPath": record_path})
+    elif columns_separator is not None and source_format == "csv":
+        options.update({
+            "separator": columns_separator,
+            "ignore_lines": -1,
+            "header_lines": 1,
+            "skip_data_lines": 0,
+            "limit": -1,
+            "store_blank_rows": True,
+            "guess_cell_value_types": False,
+            "process_quotes": True,
+            "store_blank_cells_as_nulls": True,
+            "include_file_sources": False})
+
+    if custom_options is not None:
+        options.update(**json.loads(custom_options))
 
     return options
 
@@ -145,7 +169,13 @@ def _run_or_processing(
 @click.option(
     "--record-path",
     help="record path (only applicable in conjunction with xml source format)",
+    type=str,
     multiple=True)
+@click.option(
+    "--columns-separator",
+    help="columns separator (only applicable in conjunction with csv source format)",
+    type=str,
+    default=",")
 @click.option(
     "--mappings-file",
     help="openrefine mappings file",
@@ -160,6 +190,10 @@ def _run_or_processing(
     "--log-level",
     help="log level (default INFO)",
     type=click.Choice(["DEBUG", "INFO", "WARN", "ERROR", "OFF"]), default="INFO")
+@click.option(
+    "--custom-options",
+    help="custom options (overrides everything, only in case you know what you're doing)",
+    type=str)
 def openrefine_wrench(
     host,
     port,
@@ -168,15 +202,22 @@ def openrefine_wrench(
     source_format,
     encoding,
     record_path,
+    columns_separator,
     mappings_file,
     max_workers,
-    log_level):
+    log_level,
+    custom_options):
     """Handle multiple input files in separte openrefine projects."""
 
     global logger
     logger = _prep_logger(log_level)
 
-    options = _prep_options(record_path, encoding)
+    options = _prep_options(
+        source_format,
+        record_path,
+        columns_separator,
+        encoding,
+        custom_options)
 
     source_files = pathlib.Path(source_dir).glob(f"*.{source_format}")
     or_project = None
@@ -227,11 +268,21 @@ def openrefine_wrench(
 @click.option(
     "--record-path",
     help="record path (only applicable in conjunction with xml source format)",
+    type=str,
     multiple=True)
+@click.option(
+    "--columns-separator",
+    help="columns separator (only applicable in conjunction with csv source format)",
+    type=str,
+    default=",")
 @click.option(
     "--log-level",
     help="log level (default INFO)",
     type=click.Choice(["DEBUG", "INFO", "WARN", "ERROR", "OFF"]), default="INFO")
+@click.option(
+    "--custom-options",
+    help="custom options (overrides everything, only in case you know what you're doing)",
+    type=str)
 def openrefine_wrench_create(
     host,
     port,
@@ -240,7 +291,9 @@ def openrefine_wrench_create(
     project_name,
     encoding,
     record_path,
-    log_level):
+    columns_separator,
+    log_level,
+    custom_options):
     """Create single openrefine project."""
 
     global logger
@@ -248,7 +301,12 @@ def openrefine_wrench_create(
 
     pid = getpid()
 
-    options = _prep_options(record_path, encoding)
+    options = _prep_options(
+        source_format,
+        record_path,
+        columns_separator,
+        encoding,
+        custom_options)
 
     create_or_project(
         host=host,
