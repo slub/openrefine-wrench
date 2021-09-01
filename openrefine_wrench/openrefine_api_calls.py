@@ -89,7 +89,8 @@ def apply_or_project(
         port:           openrefine port
         pip:            process id
         project_id:     id of the created openrefine project
-        or_project:     json string containing all project related rules
+        or_project:     python object that results in a json dump string of all
+                        project related rules
 
     Returns:
         response code:  openrefine api response code, "ok" if application succeeded
