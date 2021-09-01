@@ -97,7 +97,7 @@ Options:
 $ openrefine-wrench-export --help 
 Usage: openrefine-wrench-export [OPTIONS]
 
-  ...
+  Export single modified openrefine project.
 
 Options:
   --host TEXT                     openrefine host  [required]
