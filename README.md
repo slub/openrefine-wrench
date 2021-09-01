@@ -19,7 +19,7 @@ The main feature of openrefine-wrench is the orchestration of these operations o
 $ openrefine-wrench --help                  
 Usage: openrefine-wrench [OPTIONS]
 
-  ...
+  Handle multiple input files in separte openrefine projects.
 
 Options:
   --host TEXT                     openrefine host  [required]
@@ -32,11 +32,15 @@ Options:
                                   UTF-8)  [required]
   --record-path TEXT              record path (only applicable in conjunction
                                   with xml source format)
+  --columns-separator TEXT        columns separator (only applicable in
+                                  conjunction with csv source format)
   --mappings-file TEXT            openrefine mappings file  [required]
   --max-workers INTEGER           number of parallel processed openrefine
                                   projects  [required]
   --log-level [DEBUG|INFO|WARN|ERROR|OFF]
                                   log level (default INFO)
+  --custom-options TEXT           custom options (overrides everything, only
+                                  in case you know what you're doing)
   --help                          Show this message and exit.
 ```
 
@@ -46,7 +50,7 @@ Options:
 $ openrefine-wrench-create --help 
 Usage: openrefine-wrench-create [OPTIONS]
 
-  ...
+  Create single openrefine project.
 
 Options:
   --host TEXT                     openrefine host  [required]
@@ -59,8 +63,12 @@ Options:
                                   UTF-8)  [required]
   --record-path TEXT              record path (only applicable in conjunction
                                   with xml source format)
+  --columns-separator TEXT        columns separator (only applicable in
+                                  conjunction with csv source format)
   --log-level [DEBUG|INFO|WARN|ERROR|OFF]
                                   log level (default INFO)
+  --custom-options TEXT           custom options (overrides everything, only
+                                  in case you know what you're doing)
   --help                          Show this message and exit.
 ```
 
@@ -70,7 +78,7 @@ Options:
 $ openrefine-wrench-apply --help 
 Usage: openrefine-wrench-apply [OPTIONS]
 
-  ...
+  Apply rules to single openrefine project.
 
 Options:
   --host TEXT                     openrefine host  [required]
@@ -108,7 +116,7 @@ Options:
 $ openrefine-wrench-delete --help 
 Usage: openrefine-wrench-delete [OPTIONS]
 
-  ...
+  Delete single openrefine project.
 
 Options:
   --host TEXT                     openrefine host  [required]
