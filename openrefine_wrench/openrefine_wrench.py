@@ -43,7 +43,26 @@ def _prep_options(
     columns_separator,
     encoding,
     custom_options):
-    options = {"encoding": encoding}
+    options = {
+        "encoding": encoding,
+        "storeEmptyStrings": True,
+        "storeBlankCellsAsNulls": True,
+        "storeBlankRows": True,
+        "processQuotes": True,
+        "columnWidths": None,
+        "guessCellValueTypes": False,
+        "headerLines": None,
+        "ignoreLines": None,
+        "includeFileSources": False,
+        "limit": None,
+        "linesPerRow": None,
+        "projectName": None,
+        "projectTags": None,
+        "recordPath": None,
+        "separator": None,
+        "sheets": None,
+        "skipDataLines": None,
+        "trimStrings": False}
 
     if record_path is not None and source_format == "xml":
         options.update({"recordPath": record_path})
@@ -53,12 +72,7 @@ def _prep_options(
             "ignore_lines": -1,
             "header_lines": 1,
             "skip_data_lines": 0,
-            "limit": -1,
-            "store_blank_rows": True,
-            "guess_cell_value_types": False,
-            "process_quotes": True,
-            "store_blank_cells_as_nulls": True,
-            "include_file_sources": False})
+            "limit": -1})
 
     if custom_options is not None:
         options.update(**json.loads(custom_options))
