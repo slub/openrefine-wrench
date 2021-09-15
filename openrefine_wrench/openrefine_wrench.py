@@ -14,7 +14,7 @@ from openrefine_wrench.openrefine_api_calls import (
 
 logger = None
 
-def _prep_logger(log_level):
+def _prep_logger(log_level, logfile):
     logging_config = {
         "version": 1,
         "disable_existing_loggers": False,
@@ -26,12 +26,21 @@ def _prep_logger(log_level):
                 "level": "INFO",
                 "formatter": "standard",
                 "class": "logging.StreamHandler",
-                "stream": "ext://sys.stderr"}},
+                "stream": "ext://sys.stderr"},
+            "logfile": {
+                "level": "INFO",
+                "formatter": "standard",
+                "class": "logging.FileHandler",
+                "filename": str(logfile),
+                "mode": "w"}},
         "loggers": {
             "": {# root logger
                 "handlers": ["default"],
                 "level": log_level,
                 "propagate": False}}}
+
+    if logfile is not None:
+        logging_config["loggers"][""]["handlers"][0] = "logfile"
 
     logging.config.dictConfig(logging_config)
 
@@ -208,6 +217,11 @@ def _run_or_processing(
     "--custom-options",
     help="custom options (overrides everything, only in case you know what you're doing)",
     type=str)
+@click.option(
+    "--logfile",
+    help="openrefine-wrench related logfile",
+    default=None,
+    type=str)
 def openrefine_wrench(
     host,
     port,
@@ -220,11 +234,12 @@ def openrefine_wrench(
     mappings_file,
     max_workers,
     log_level,
-    custom_options):
+    custom_options,
+    logfile):
     """Handle multiple input files in separte openrefine projects."""
 
     global logger
-    logger = _prep_logger(log_level)
+    logger = _prep_logger(log_level, logfile)
 
     options = _prep_options(
         source_format,
@@ -297,6 +312,11 @@ def openrefine_wrench(
     "--custom-options",
     help="custom options (overrides everything, only in case you know what you're doing)",
     type=str)
+@click.option(
+    "--logfile",
+    help="openrefine-wrench-create related logfile",
+    default=None,
+    type=str)
 def openrefine_wrench_create(
     host,
     port,
@@ -307,11 +327,12 @@ def openrefine_wrench_create(
     record_path,
     columns_separator,
     log_level,
-    custom_options):
+    custom_options,
+    logfile):
     """Create single openrefine project."""
 
     global logger
-    logger = _prep_logger(log_level)
+    logger = _prep_logger(log_level, logfile)
 
     pid = getpid()
 
@@ -354,16 +375,22 @@ def openrefine_wrench_create(
     "--log-level",
     help="log level (default INFO)",
     type=click.Choice(["DEBUG", "INFO", "WARN", "ERROR", "OFF"]), default="INFO")
+@click.option(
+    "--logfile",
+    help="openrefine-wrench-apply related logfile",
+    default=None,
+    type=str)
 def openrefine_wrench_apply(
     host,
     port,
     project_id,
     mappings_file,
-    log_level):
+    log_level,
+    logfile):
     """Apply rules to single openrefine project."""
 
     global logger
-    logger = _prep_logger(log_level)
+    logger = _prep_logger(log_level, logfile)
 
     pid = getpid()
 
@@ -401,16 +428,22 @@ def openrefine_wrench_apply(
     "--log-level",
     help="log level (default INFO)",
     type=click.Choice(["DEBUG", "INFO", "WARN", "ERROR", "OFF"]), default="INFO")
+@click.option(
+    "--logfile",
+    help="openrefine-wrench-export related logfile",
+    default=None,
+    type=str)
 def openrefine_wrench_export(
     host,
     port,
     project_id,
     export_file,
-    log_level):
+    log_level,
+    logfile):
     """Export single modified openrefine project."""
 
     global logger
-    logger = _prep_logger(log_level)
+    logger = _prep_logger(log_level, logfile)
 
     pid = getpid()
 
@@ -444,15 +477,21 @@ def openrefine_wrench_export(
     "--log-level",
     help="log level (default INFO)",
     type=click.Choice(["DEBUG", "INFO", "WARN", "ERROR", "OFF"]), default="INFO")
+@click.option(
+    "--logfile",
+    help="openrefine-wrench-delete related logfile",
+    default=None,
+    type=str)
 def openrefine_wrench_delete(
     host,
     port,
     project_id,
-    log_level):
+    log_level,
+    logfile):
     """Delete single openrefine project."""
 
     global logger
-    logger = _prep_logger(log_level)
+    logger = _prep_logger(log_level, logfile)
 
     pid = getpid()
 
