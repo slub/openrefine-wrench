@@ -16,7 +16,7 @@ The main feature of openrefine-wrench is the orchestration of these operations o
 ### handle multiple input files in separte openrefine projects
 
 ```
-$ openrefine-wrench --help                  
+$ openrefine-wrench --help
 Usage: openrefine-wrench [OPTIONS]
 
   Handle multiple input files in separte openrefine projects.
@@ -41,6 +41,7 @@ Options:
                                   log level (default INFO)
   --custom-options TEXT           custom options (overrides everything, only
                                   in case you know what you're doing)
+  --logfile TEXT                  openrefine-wrench related logfile
   --help                          Show this message and exit.
 ```
 
@@ -69,6 +70,7 @@ Options:
                                   log level (default INFO)
   --custom-options TEXT           custom options (overrides everything, only
                                   in case you know what you're doing)
+  --logfile TEXT                  openrefine-wrench-create related logfile
   --help                          Show this message and exit.
 ```
 
@@ -88,6 +90,7 @@ Options:
   --mappings-file TEXT            openrefine mappings file  [required]
   --log-level [DEBUG|INFO|WARN|ERROR|OFF]
                                   log level (default INFO)
+  --logfile TEXT                  openrefine-wrench-apply related logfile
   --help                          Show this message and exit.
 ```
 
@@ -107,6 +110,7 @@ Options:
   --project-id TEXT               openrefine project id  [required]
   --log-level [DEBUG|INFO|WARN|ERROR|OFF]
                                   log level (default INFO)
+  --logfile TEXT                  openrefine-wrench-export related logfile
   --help                          Show this message and exit.
 ```
 
@@ -125,6 +129,7 @@ Options:
   --project-id TEXT               openrefine project id  [required]
   --log-level [DEBUG|INFO|WARN|ERROR|OFF]
                                   log level (default INFO)
+  --logfile TEXT                  openrefine-wrench-delete related logfile
   --help                          Show this message and exit.
 ```
 
