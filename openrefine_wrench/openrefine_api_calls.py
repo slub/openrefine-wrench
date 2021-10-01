@@ -2,11 +2,13 @@ import pathlib
 import logging
 import requests
 import json
+from time import sleep
 from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
 def _get_csrf_token(host, port, pid):
+    """required for all post requests against the openrefine api"""
     resp_csrf_token = None
     try:
         resp_csrf_token = requests.get(
@@ -16,6 +18,34 @@ def _get_csrf_token(host, port, pid):
         raise
 
     return resp_csrf_token.json()["token"]
+
+def _check_async(
+    host,
+    port,
+    pid,
+    project_id):
+    """check for project related async processes in the backround,
+    prevents premature project application"""
+    logger.info(f"[pid {pid}] check for project \"{project_id}\" related async processes")
+
+    params = {"project": f"{project_id}"}
+
+    while True:
+        async_processes = None
+        try:
+            async_processes = requests.get(
+                f"http://{host}:{port}/command/core/get-processes?",
+                params=params)
+        except requests.exceptions.RequestException as exc:
+            logger.error(f"[pid {pid}] unable to get state of project \"{project_id}\" related "
+                         f"async processes, error was:\n{exc}")
+            raise
+
+        if len(async_processes.json()["processes"]) == 0:
+            logger.info(f"no (more) project \"{project_id}\" related async processes")
+            return True
+
+        sleep(1)
 
 def create_or_project(
     host,
@@ -46,7 +76,7 @@ def create_or_project(
     payload = {
         "project-name": project_name,}
 
-    if source_format is "xml":
+    if source_format == "xml":
         payload.update({"format": "text/xml"})
 
     if options is not None:
@@ -114,9 +144,10 @@ def apply_or_project(
             f"\"{project_id}\", error was:\n{exc}")
         raise
 
-    logger.info(f"[pid {pid}] applied project id \"{project_id}\"")
-
-    return resp_project_apply.json()["code"]
+    if (resp_project_apply.json()["code"] == "ok"
+        and _check_async(host, port, pid, project_id)):
+            logger.info(f"[pid {pid}] applied project id \"{project_id}\"")
+            return resp_project_apply.json()["code"]
 
 def export_or_project_rows(
     host,
