@@ -39,7 +39,7 @@ def _prep_logger(log_level, logfile):
                 "level": log_level,
                 "propagate": False}}}
 
-    if logfile is not None:
+    if (logfile is not None and logfile != "None"):
         logging_config["loggers"][""]["handlers"][0] = "logfile"
 
     logging.config.dictConfig(logging_config)
