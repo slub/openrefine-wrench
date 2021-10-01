@@ -109,7 +109,7 @@ def test_csv_or_project(_docker_handler):
             project_id=project_id,
             or_project=json.loads(csv_or_transformation))
 
-        assert apply_resp == "ok"
+        assert apply_resp == True
 
         export_file = openrefine_api_calls.export_or_project_rows(
             host="localhost",
