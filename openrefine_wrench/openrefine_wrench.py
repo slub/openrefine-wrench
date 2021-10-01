@@ -124,7 +124,7 @@ def _run_or_processing(
 
     logger.info(f"[pid {pid}] start or processing for file {project_file}")
 
-    project_name = f"{pathlib.Path(project_file).stem}_{str(uuid.uuid4())}"
+    project_name = f"{pathlib.Path(project_file).stem}_{uuid.uuid4()}"
 
     project_id = create_or_project(
         host=host,
