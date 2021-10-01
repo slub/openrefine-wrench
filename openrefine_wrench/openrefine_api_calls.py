@@ -144,10 +144,15 @@ def apply_or_project(
             f"\"{project_id}\", error was:\n{exc}")
         raise
 
-    if (resp_project_apply.json()["code"] == "ok"
-        and _check_async(host, port, pid, project_id)):
+    if resp_project_apply.json()["code"] == "ok":
+        logger.info(f"[pid {pid}] applied project id \"{project_id}\"")
+        return True
+    elif (resp_project_apply.json()["code"] == "pending"
+        and _check_async(host, port, pid, project_id) == True):
             logger.info(f"[pid {pid}] applied project id \"{project_id}\"")
-            return resp_project_apply.json()["code"]
+            return True
+    else:
+        return False
 
 def export_or_project_rows(
     host,
