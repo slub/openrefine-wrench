@@ -54,7 +54,7 @@ def _check_async(
         _async_proc_num = async_proc_num
 
         if async_proc_num == 0:
-            logger.info(f"no more project \"{project_id}\" related async processes")
+            logger.info(f"[pid {pid}] no more project \"{project_id}\" related async processes")
             return True
 
         sleep(1)
