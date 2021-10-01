@@ -30,6 +30,13 @@ def _check_async(
 
     params = {"project": f"{project_id}"}
 
+    _async_proc_num = None
+
+    def _log_async_proc_num(async_proc_num, _async_proc_num):
+        if (async_proc_num < _async_proc_num or _async_proc_num is None):
+            logger.info(f"number of async processes: {async_proc_num}")
+            _async_proc_num = async_proc_num
+
     while True:
         async_processes = None
         try:
@@ -41,8 +48,11 @@ def _check_async(
                          f"async processes, error was:\n{exc}")
             raise
 
-        if len(async_processes.json()["processes"]) == 0:
-            logger.info(f"no (more) project \"{project_id}\" related async processes")
+        async_proc_num = len(async_processes.json()["processes"])
+        _log_async_proc_num(async_proc_num, _async_proc_num)
+
+        if async_proc_num == 0:
+            logger.info(f"no more project \"{project_id}\" related async processes")
             return True
 
         sleep(1)
