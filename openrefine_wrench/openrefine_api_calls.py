@@ -30,12 +30,12 @@ def _check_async(
 
     params = {"project": f"{project_id}"}
 
-    _async_proc_num = None
+    _async_proc_num = 0
 
     def _log_async_proc_num(async_proc_num, _async_proc_num):
-        if (async_proc_num < _async_proc_num or _async_proc_num is None):
+        if (async_proc_num < _async_proc_num or _async_proc_num == 0):
             logger.info(f"number of async processes: {async_proc_num}")
-            _async_proc_num = async_proc_num
+        _async_proc_num = async_proc_num
 
     while True:
         async_processes = None
